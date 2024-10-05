@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  mongodb:
+    container_name: downloader-mongodb
+    image: mongo:latest
+    ports:
+      - "27020:27017"  # Forwarding host port 27020 to container port 27017
+    volumes:
+      - mongodb_data:/data/db 
+
+  scraper:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: pdf-downloader
+    depends_on:
+      - mongodb  # Ensure MongoDB starts before the scraper
+    volumes:
+     - ./pdf_downloader:/home/pdf_downloader
+    network_mode: host # Use host network mode to access MongoDB on localhost
+volumes:
+  mongodb_data:
